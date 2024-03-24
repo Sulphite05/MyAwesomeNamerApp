@@ -29,7 +29,7 @@ class _RegisterViewState extends State<RegisterView> {
       // TO DO: implement dispose
     _email.dispose();
     _password.dispose();
-    super.dispose();
+    super.dispose(); 
   }
 
   @override
@@ -84,10 +84,18 @@ class _RegisterViewState extends State<RegisterView> {
                     },
                     child: const Text('Register')
                     ),
+                    TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/login/', 
+                        (route) => false);
+                    },
+                    child: const Text('Already registered? Login here!'),
+                    )
                 ],
               );
             default:
-              return const Text("Loading...");
+              return const CircularProgressIndicator();
           }   
         },
         future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,)     
