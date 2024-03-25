@@ -5,8 +5,10 @@ import 'package:mynotes/view/login_view.dart';
 import 'package:mynotes/view/register_view.dart';
 import 'package:mynotes/view/verify_email_view.dart';
 import 'firebase_options.dart';
+import 'dart:developer' as devtools show log;
 
 void main() {
+  devtools.log('message');
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
       title: 'Flutter Demo',
@@ -36,13 +38,22 @@ class HomePage extends StatelessWidget {
 
             case ConnectionState.done:
               final user = FirebaseAuth.instance.currentUser;
-              user?.reload();
-              if(user?.emailVerified ?? false){
-                return const Text('Done');
-              }
+
+              if (user != null){
+                user.reload();
+                if(user.emailVerified){
+                  return const NotesView();
+
+                }
+
               else{
                 return const VerifyEmailView();
               }
+              }
+              else{
+                return const LoginView();
+              }
+              
 
             default:
               return const CircularProgressIndicator();
@@ -53,6 +64,40 @@ class HomePage extends StatelessWidget {
    }
 }
 
+
+enum MenuAction {logout}
+class NotesView extends StatefulWidget {
+  const NotesView({super.key});
+
+  @override
+  State<NotesView> createState() => _NotesViewState();
+}
+
+class _NotesViewState extends State<NotesView> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        title: const Text("My Notes"),
+        actions: [
+          PopupMenuButton( 
+            onSelected: (value){
+              devtools.log(value.toString());
+            }, 
+            itemBuilder: (context){
+              return [const PopupMenuItem<MenuAction>(
+              value: MenuAction.logout,  // coder sees this
+              child: Text("Log Out"), // user sees this
+              )]; // since popmenuentry requires a list return type
+          })
+          ],
+      ),
+
+    );
+  }
+}
 
 // class HomePage extends StatelessWidget {
 //   const HomePage({super.key});
