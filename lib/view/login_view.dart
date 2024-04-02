@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/firebase_options.dart';
+import 'dart:developer'as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -72,22 +73,28 @@ class _LoginViewState extends State<LoginView> {
                       final password = _password.text;
                       
                       try{
-                        final userCredentials = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
                         email: email, 
-                        password: password);
-                        print(userCredentials);
+                        password: password,
+                        );
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/notes/', 
+                          (route) => false,
+                          );
                       }
                       on FirebaseAuthException catch(e){
-                        print(e.code);
+                        devtools.log(e.code.toString());
                       }
                     }, 
                     child: const Text('Login')
                     ),
                     TextButton(
                     onPressed: () async {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/register/', 
-                        (route) => false);
+                      Navigator.of(context).pushNamedAndRemoveUntil
+                      (
+                        '/register/', // push this route
+                        (route) => false  // means keep removing without caring about the route since not required anymore prev path
+                        );
                     }, 
                     child: const Text('Not registered yet? Register here!'),
                     ),
