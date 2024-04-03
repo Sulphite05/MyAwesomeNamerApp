@@ -71,6 +71,12 @@ class _RegisterViewState extends State<RegisterView> {
                             await FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
                                     email: email, password: password);
+                            final user = FirebaseAuth.instance.currentUser;
+                            await user?.sendEmailVerification();
+
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pushNamed(verifyEmailRoute);
+
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'invalid-email') {
                               // ignore: use_build_context_synchronously
@@ -79,9 +85,14 @@ class _RegisterViewState extends State<RegisterView> {
                               // ignore: use_build_context_synchronously
                               await showErrorDialog(
                                   context, 'Enter a strong password');
+                            } else if (e.code == 'email-already-in-use') {
+                              // ignore: use_build_context_synchronously
+                              await showErrorDialog(
+                                  context, 'Email already in use');
                             } else {
                               // ignore: use_build_context_synchronously
-                              await showErrorDialog(context, 'Error: ${e.code}');
+                              await showErrorDialog(
+                                  context, 'Error: ${e.code}');
                             }
                           }
                         },

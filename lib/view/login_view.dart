@@ -80,7 +80,7 @@ class _LoginViewState extends State<LoginView> {
                               (route) => false,
                             );
                           } on FirebaseAuthException catch (e) {
-                            print(e.code);
+                            devtools.log(e.code.toString());
                             if (e.code == 'user-not-found') {
                               // ignore: use_build_context_synchronously
                               await showErrorDialog(context, 'User not found');
