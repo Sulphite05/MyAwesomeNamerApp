@@ -75,16 +75,35 @@ class _LoginViewState extends State<LoginView> {
                               email: email,
                               password: password,
                             );
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              notesRoute,
-                              (route) => false,
-                            );
+
+                            final user = FirebaseAuth.instance.currentUser;
+
+                            if (user != null) {
+                              user.reload();
+                              if (user.emailVerified) {
+                                // ignore: use_build_context_synchronously
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                  notesRoute,
+                                  (route) => false,
+                                );
+                              } else {
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                  verifyEmailRoute,
+                                  (route) => false,
+                                );
+                              }
+                            } else {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                loginRoute,
+                                (route) => false,
+                              );
+                            }
                           } on FirebaseAuthException catch (e) {
                             devtools.log(e.code.toString());
                             if (e.code == 'user-not-found') {
                               // ignore: use_build_context_synchronously
                               await showErrorDialog(context, 'User not found');
-                            } else if (e.code == 'wrong-password') {
+                            } else if (e.code == 'invalid-credential') {
                               // ignore: use_build_context_synchronously
                               await showErrorDialog(
                                   context, 'Email or Password is incorrect!');
