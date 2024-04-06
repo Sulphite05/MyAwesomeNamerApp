@@ -1,4 +1,4 @@
-// import abstract implementations to create a concrete implementation here
+// import abstract implementations to create a concrete implementation of AuthProvider
 
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_provider.dart';
@@ -95,6 +95,7 @@ class FirebaseAuthProvider implements AuthProvider {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await user.sendEmailVerification();
+      
     } else {
       throw UserNotLoggedInAuthException();
     }
