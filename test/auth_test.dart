@@ -4,14 +4,15 @@ import 'package:mynotes/services/auth/auth_user.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Mock Authentication', (){
+  group('Mock Authentication', () {
     final provider = MockAuthProvider();
-    test('Should not be initialised at the time of instantiation', (){
+    test('Should not be initialised at the time of instantiation', () {
       expect(provider.isInitialized, false);
     });
 
     test('Cannot logout if not initialised', () {
-      expect(provider.logOut(), throwsA(const TypeMatcher<NotInitialisedException>()));
+      expect(provider.logOut(),
+          throwsA(const TypeMatcher<NotInitialisedException>()));
     });
 
     test('Should be able to be initialised', () async {
@@ -23,24 +24,47 @@ void main() {
       expect(provider.currentUser, null);
     });
 
-    test('Should be able to initialise in less than two seconds', () async{
-      await provider.initialize();
-      expect(provider.isInitialized, true);
-    }, timeout: const Timeout(Duration(seconds: 2)),  // terminates after 2 seconds hence test fails if work isn't done
+    test(
+      'Should be able to initialise in less than two seconds',
+      () async {
+        await provider.initialize();
+        expect(provider.isInitialized, true);
+      },
+      timeout: const Timeout(Duration(
+          seconds:
+              2)), // terminates after 2 seconds hence test fails if work isn't done
     );
 
     test('Create user should delegate to login function', () async {
-      final badEmailUser = await provider.createUser(email: 'aqiba@gmail.com', password: 'anyPass');
-      expect(badEmailUser, throwsA(const TypeMatcher<UserNotFoundAuthException>()));
+      final badEmailUser = await provider.createUser(
+          email: 'aqiba@gmail.com', password: 'anyPass');
+      expect(badEmailUser,
+          throwsA(const TypeMatcher<UserNotFoundAuthException>()));
 
-      final badPasswordUser = await provider.createUser(email: 'aqibaabdulqadir@gmail.com', password: 'foobar');
-      expect(badPasswordUser, throwsA(const TypeMatcher<InvalidCredentialsAuthException>()));
+      final badPasswordUser = await provider.createUser(
+          email: 'aqibaabdulqadir@gmail.com', password: 'foobar');
+      expect(badPasswordUser,
+          throwsA(const TypeMatcher<InvalidCredentialsAuthException>()));
 
       final user = await provider.createUser(email: 'foo', password: 'bar');
       expect(provider.currentUser, user);
       expect(user.isEmailVerified, false);
     });
 
+    test('Login user should be able to get verified', () async {
+      await provider.sendEmailVerification();
+      final user = provider.currentUser;
+      expect(user, isNotNull);
+      expect(user!.isEmailVerified,
+          true); // ! means force it since it's a private property
+    });
+
+    test('User should be able to log out and log in again', () async {
+      await provider.logOut();
+      await provider.logIn(email: 'email', password: 'password');
+      final user = provider.currentUser;
+      expect(user, isNotNull);
+    });
   });
 }
 
