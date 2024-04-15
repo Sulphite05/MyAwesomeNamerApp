@@ -36,12 +36,12 @@ void main() {
     );
 
     test('Create user should delegate to login function', () async {
-      final badEmailUser = await provider.createUser(
+      final badEmailUser = provider.createUser(
           email: 'aqiba@gmail.com', password: 'anyPass');
       expect(badEmailUser,
           throwsA(const TypeMatcher<UserNotFoundAuthException>()));
 
-      final badPasswordUser = await provider.createUser(
+      final badPasswordUser = provider.createUser(
           email: 'aqibaabdulqadir@gmail.com', password: 'foobar');
       expect(badPasswordUser,
           throwsA(const TypeMatcher<InvalidCredentialsAuthException>()));
@@ -51,7 +51,7 @@ void main() {
       expect(user.isEmailVerified, false);
     });
 
-    test('Login user should be able to get verified', () async {
+    test('Logged in user should be able to get verified', () async {
       await provider.sendEmailVerification();
       final user = provider.currentUser;
       expect(user, isNotNull);
@@ -100,7 +100,7 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInitialisedException();
     if (email == 'aqiba@gmail.com') throw UserNotFoundAuthException();
     if (password == 'foobar') throw InvalidCredentialsAuthException();
-    const user = AuthUser(isEmailVerified: true);
+    const user = AuthUser(isEmailVerified: false);
     _user = user;
     return Future.value(user); //return user's value after delay
   }
