@@ -123,3 +123,6 @@ class MockAuthProvider implements AuthProvider {
     _user = newUser;
   }
 }
+
+
+// next we learn about sqlite for data storage in databases
