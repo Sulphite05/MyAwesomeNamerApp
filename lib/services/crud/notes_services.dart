@@ -12,6 +12,18 @@ class NotesService {
 
   List<DatabaseNote> _notes = [];
 
+  Future<DatabaseUser> getOrCreateUser({required String email}) async {
+    try{
+      final user = await getUser(email: email);
+      return user;
+    } on CouldNotFindUser {
+      final createdUser = await createUser(email: email);
+      return createdUser;
+    } catch (e){
+      rethrow;
+    }
+  }
+
   final _notesStreamController = StreamController<
       List<
           DatabaseNote>>.broadcast(); // we will listen to the changes in the stream
