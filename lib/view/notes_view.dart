@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/enums/menu_action.dart';
 import 'dart:developer' as devtools show log;
 import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/crud/notes_services.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -12,6 +14,27 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  late final NotesService _noteService;
+  String get userEmail =>
+      AuthService.firebase().currentUser!.email!; // force and wrap email
+
+  @override
+  void initState() {
+    // to open DB
+    // TODO: implement initState
+
+    _noteService = NotesService();
+    _noteService.open();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _noteService.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +75,12 @@ class _NotesViewState extends State<NotesView> {
             ]; // since popmenuentry requires a list return type
           })
         ],
+      ),
+      body: FutureBuilder(
+        future: _noteService.getOrCreateUser(email: userEmail),
+        builder:(context, snapshot) {
+          
+        },
       ),
     );
   }
