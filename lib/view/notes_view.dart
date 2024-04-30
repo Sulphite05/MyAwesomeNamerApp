@@ -1,3 +1,4 @@
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
@@ -14,6 +15,8 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+
+  
   late final NotesService _noteService;
   String get userEmail =>
       AuthService.firebase().currentUser!.email!; // force and wrap email
@@ -79,6 +82,22 @@ class _NotesViewState extends State<NotesView> {
       body: FutureBuilder(
         future: _noteService.getOrCreateUser(email: userEmail),
         builder:(context, snapshot) {
+          switch(snapshot.connectionState){
+           
+            case ConnectionState.done:
+              return StreamBuilder(stream: _noteService.allNotes, builder:(context, snapshot) {
+                switch(snapshot.connectionState){                 
+                  case ConnectionState.waiting:
+                    return const Text('Waiting for all notes...');
+                  
+                  default:
+                    return CircularProgressIndicator();
+                }
+              },);
+            
+            default:
+              return CircularProgressIndicator();
+          }
           
         },
       ),

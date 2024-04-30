@@ -1,5 +1,6 @@
 import 'dart:async';
-
+// singleton => single object, remians the same without any copy
+// we need to make noteService singleton; find steps below
 import 'package:flutter/foundation.dart';
 import 'package:mynotes/services/crud/crud_exceptions.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,27 +12,30 @@ class NotesService {
   Database? _db;
 
   List<DatabaseNote> _notes = [];
+
+  NotesService._sharedInstance();                                     // step-1
+  static final NotesService _shared = NotesService._sharedInstance(); // step-2
+  factory NotesService() => _shared;                                  // step-3
+
   final _notesStreamController = StreamController<
       List<
           DatabaseNote>>.broadcast(); // we will listen to the changes in the stream
-                                      // it is in control to the changes in the _notes
-                                      // it's fine to add new listeners to it, no error will be caused
- 
-  Stream<List<DatabaseNote>> get allNotes() => _notesStreamController.stream;
+  // it is in control to the changes in the _notes
+  // it's fine to add new listeners to it, no error will be caused
+
+  Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
   Future<DatabaseUser> getOrCreateUser({required String email}) async {
-    try{
+    try {
       final user = await getUser(email: email);
       return user;
     } on CouldNotFindUser {
       final createdUser = await createUser(email: email);
       return createdUser;
-    } catch (e){
+    } catch (e) {
       rethrow;
     }
   }
-
-  
 
   Future<void> _cacheNotes() async {
     final allNotes = await getAllNotes();
@@ -247,13 +251,11 @@ class NotesService {
       throw UnabletoGetDocumentsDirectory();
     }
   }
-  
 
   Future<void> _ensureDbIsOpen() async {
-    try{
+    try {
       await open();
-    } on DatabaseAlreadyOpenException{
-    }
+    } on DatabaseAlreadyOpenException {}
   }
 
   Future<void> close() async {
