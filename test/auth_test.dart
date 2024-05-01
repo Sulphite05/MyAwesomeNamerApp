@@ -36,8 +36,8 @@ void main() {
     );
 
     test('Create user should delegate to login function', () async {
-      final badEmailUser = provider.createUser(
-          email: 'aqiba@gmail.com', password: 'anyPass');
+      final badEmailUser =
+          provider.createUser(email: 'aqiba@gmail.com', password: 'anyPass');
       expect(badEmailUser,
           throwsA(const TypeMatcher<UserNotFoundAuthException>()));
 
@@ -100,7 +100,10 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInitialisedException();
     if (email == 'aqiba@gmail.com') throw UserNotFoundAuthException();
     if (password == 'foobar') throw InvalidCredentialsAuthException();
-    const user = AuthUser(isEmailVerified: false);
+    const user = AuthUser(
+      isEmailVerified: false,
+      email: 'aqiba@gmail.com',
+    );
     _user = user;
     return Future.value(user); //return user's value after delay
   }
@@ -119,7 +122,10 @@ class MockAuthProvider implements AuthProvider {
     final user = _user;
     if (user == null) throw UserNotFoundAuthException();
     await Future.delayed(const Duration(seconds: 1));
-    const newUser = AuthUser(isEmailVerified: true);
+    const newUser = AuthUser(
+      isEmailVerified: true,
+      email: 'aqiba@gmail.com',
+    );
     _user = newUser;
   }
 }
