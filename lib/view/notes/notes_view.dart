@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/enums/menu_action.dart';
@@ -45,7 +44,8 @@ class _NotesViewState extends State<NotesView> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(newNotesRoute); // not removeUntil because we want to alow the user to move back
+              Navigator.of(context).pushNamed(
+                  newNotesRoute); // not removeUntil because we want to alow the user to move back
             },
             icon: Icon(Icons.add),
           ),
@@ -92,16 +92,22 @@ class _NotesViewState extends State<NotesView> {
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return const Text('Waiting for all notes...');
+                    // atleast one argument must be returned
 
+                    case ConnectionState
+                          .active: // implicit fall-through(has no logic and is implicitly falling through the next test case)
+                      return const Text(
+                          'Waiting for all notes...'); //no break statements
+                    // case ConnectionState.done:
+                    // break;
                     default:
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                   }
                 },
               );
 
             default:
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
           }
         },
       ),
