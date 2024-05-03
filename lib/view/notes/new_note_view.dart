@@ -34,7 +34,7 @@ class _NewNotesViewState extends State<NewNotesView> {
     final currentUser = AuthService.firebase()
         .currentUser!; // current user must exist; if it doesn't then your app must crash
     final email = currentUser.email!;
-    final DatabaseUser owner = await _notesService.getUser(email: email);
+    final owner = await _notesService.getUser(email: email);
     return await _notesService.createNote(owner: owner);
   }
 
@@ -97,11 +97,16 @@ class _NewNotesViewState extends State<NewNotesView> {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               // TODO: Handle this case.
+              print(snapshot.data);
               _note = snapshot.data as DatabaseNote;
               setUpTextControllerListener();
               return TextField(
                 controller: _textController,
                 keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  hintText: 'Start typing your note...',
+                ),
               );
 
             default:
