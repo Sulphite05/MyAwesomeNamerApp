@@ -1,5 +1,5 @@
 import 'dart:async';
-// singleton => single object, remians the same without any copy
+// singleton => single object, remains the same without any copy
 // we need to make noteService singleton; find steps below
 import 'package:flutter/foundation.dart';
 import 'package:mynotes/services/crud/crud_exceptions.dart';
@@ -13,13 +13,17 @@ class NotesService {
 
   List<DatabaseNote> _notes = [];
 
-  NotesService._sharedInstance();                                     // step-1
-  static final NotesService _shared = NotesService._sharedInstance(); // step-2
+  static final NotesService _shared = NotesService._sharedInstance(); // step-1
+  NotesService._sharedInstance(){
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: (){
+        _notesStreamController.sink.add(_notes);
+      }
+    );
+  } // step-2
   factory NotesService() => _shared;                                  // step-3
 
-  final _notesStreamController = StreamController<
-      List<
-          DatabaseNote>>.broadcast(); // we will listen to the changes in the stream
+  late final StreamController<List<DatabaseNote>> _notesStreamController; // we will listen to the changes in the stream later
   // it is in control to the changes in the _notes
   // it's fine to add new listeners to it, no error will be caused
 

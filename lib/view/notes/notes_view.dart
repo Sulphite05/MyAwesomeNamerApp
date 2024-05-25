@@ -26,13 +26,7 @@ class _NotesViewState extends State<NotesView> {
     _noteService.open();
     super.initState();
   }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _noteService.close();
-    super.dispose();
-  }
+// nothing to dispose! if we close notes then after every hot reload the notesController will open and close so yeah
 
   @override
   Widget build(BuildContext context) {
