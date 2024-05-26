@@ -14,16 +14,16 @@ class NotesService {
   List<DatabaseNote> _notes = [];
 
   static final NotesService _shared = NotesService._sharedInstance(); // step-1
-  NotesService._sharedInstance(){
-    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
-      onListen: (){
-        _notesStreamController.sink.add(_notes);
-      }
-    );
+  NotesService._sharedInstance() {
+    _notesStreamController =
+        StreamController<List<DatabaseNote>>.broadcast(onListen: () {
+      _notesStreamController.sink.add(_notes);
+    });
   } // step-2
-  factory NotesService() => _shared;                                  // step-3
+  factory NotesService() => _shared; // step-3
 
-  late final StreamController<List<DatabaseNote>> _notesStreamController; // we will listen to the changes in the stream later
+  late final StreamController<List<DatabaseNote>>
+      _notesStreamController; // we will listen to the changes in the stream later
   // it is in control to the changes in the _notes
   // it's fine to add new listeners to it, no error will be caused
 
@@ -79,9 +79,9 @@ class NotesService {
 
     final result =
         notes.map((noteRow) => DatabaseNote.from_row(noteRow)); // iterable
-    if (notes.isEmpty) {
-      throw CouldNotFindNote();
-    }
+    // if (notes.isEmpty) {
+    //   throw CouldNotFindNote();
+    // }
 
     return result;
   }
@@ -140,12 +140,14 @@ class NotesService {
     final db = _getDatabaseOrThrow();
 
     final dbUser =
-        getUser(email: owner.email); // if the given user actually exists
+        await getUser(email: owner.email); // if the given user actually exists
     // make sure user exists in the DB with correct ID
+
     if (dbUser != owner) {
       // can be the user with same email but different user :( more checks
       throw CouldNotFindUser();
     }
+
     const text = '';
     // create the note
     final noteId = await db.insert(noteTable, {
