@@ -88,10 +88,28 @@ class _NotesViewState extends State<NotesView> {
                     case ConnectionState.waiting:
                     // atleast one argument must be returned
 
-                    case ConnectionState
-                          .active: // implicit fall-through(has no logic and is implicitly falling through the next test case)
-                      return const Text(
-                          'Waiting for all notes...'); //no break statements
+                    case ConnectionState.active:
+                      // implicit fall-through(has no logic and is implicitly falling through the next test case)
+                      if (snapshot.hasData) {
+                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        return ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = allNotes[index];
+                            return ListTile(
+                              title: Text(
+                                note.text,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    //no break statements
                     // case ConnectionState.done:
                     // break;
                     default:
