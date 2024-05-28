@@ -92,20 +92,7 @@ class _NotesViewState extends State<NotesView> {
                       // implicit fall-through(has no logic and is implicitly falling through the next test case)
                       if (snapshot.hasData) {
                         final allNotes = snapshot.data as List<DatabaseNote>;
-                        return ListView.builder(
-                          itemCount: allNotes.length,
-                          itemBuilder: (context, index) {
-                            final note = allNotes[index];
-                            return ListTile(
-                              title: Text(
-                                note.text,
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          },
-                        );
+                        
                       } else {
                         return const CircularProgressIndicator();
                       }
@@ -125,31 +112,4 @@ class _NotesViewState extends State<NotesView> {
       ),
     );
   }
-}
-
-Future<bool> showLogoutDialog(BuildContext context) {
-  return showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Sign Out'),
-              content: const Text('Are you sure you want to sign out?'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    child: const Text('Cancel')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pop(true); // to return a value to the show dialogue
-                    },
-                    child: const Text('Sign Out')),
-              ],
-            );
-          })
-      .then((value) =>
-          value ??
-          false); // show dialogue's value can be null, for instance, i press somewhere else on the screen instead of the pop up
 }
