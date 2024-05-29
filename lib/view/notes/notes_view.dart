@@ -4,6 +4,8 @@ import 'package:mynotes/enums/menu_action.dart';
 import 'dart:developer' as devtools show log;
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_services.dart';
+import 'package:mynotes/utilities/dialogs/logout_dialog.dart';
+import 'package:mynotes/view/notes/notes_list_view.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -92,7 +94,12 @@ class _NotesViewState extends State<NotesView> {
                       // implicit fall-through(has no logic and is implicitly falling through the next test case)
                       if (snapshot.hasData) {
                         final allNotes = snapshot.data as List<DatabaseNote>;
-                        
+                        return NotesListView(
+                          notes: allNotes,
+                          onDeleteNote: (note) async {
+                            await _noteService.deleteNote(id: note.id);
+                          },
+                        );
                       } else {
                         return const CircularProgressIndicator();
                       }
