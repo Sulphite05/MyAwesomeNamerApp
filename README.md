@@ -1,6 +1,6 @@
 # My Awesome Namer App
 
-Restarting my journey in Flutter from the very basics to abslute advanced. This is my first official flutter project.
+Restarting my journey in Flutter from the very basics to absolute advanced. This is my first official flutter project.
 
 ## Getting Started
 
