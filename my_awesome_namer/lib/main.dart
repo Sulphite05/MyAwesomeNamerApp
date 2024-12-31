@@ -27,7 +27,20 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
+
+  void getNext() {
+    current = WordPair.random();
+    notifyListeners(); // ensures that anyone watching MyAppState is notified
+  }
 }
+// MyAppState defines the data the app needs to function.
+// The state class extends ChangeNotifier, which means that
+// it can notify others about its own changes.
+// For example, if the current word pair changes,
+// some widgets in the app need to know.
+// The state is created and provided to the whole app using a
+// ChangeNotifierProvider(See MyApp) allowing any widget in
+// the app to get hold of the state
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -42,7 +55,7 @@ class MyHomePage extends StatelessWidget {
           Text(appState.current.asLowerCase),
           ElevatedButton(
               onPressed: () {
-                print('button pressed!');
+                appState.getNext();
               },
               child: Text('Next'))
         ],
