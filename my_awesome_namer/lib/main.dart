@@ -48,18 +48,60 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    var pair = appState.current;
     return Scaffold(
-      body: Column(
-        children: [
-          Text('A random idea: '),
-          Text(appState.current.asLowerCase),
-          ElevatedButton(
-              onPressed: () {
-                appState.getNext();
-              },
-              child: Text('Next'))
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.center, 
+          // already centered horizontally, use widget inspector to see how
+          // we need to wrap it with Center widget to actually center it on the page
+          children: [
+            // Text('A random AWESOME idea: '),
+            BigCard(pair: pair),
+            SizedBox(height: 20,),
+            ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'))
+          ],
+        ),
       ),
     );
   }
 }
+
+class BigCard extends StatelessWidget {
+  const BigCard({
+    super.key,
+    required this.pair,
+  });
+
+  final WordPair pair;
+
+  @override
+  Widget build(BuildContext context) {
+
+    final theme = Theme.of(context); //  requests the app's current theme
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary, // onPrimary means on top of the primary shade
+    );
+
+    return Card(
+      color: theme.colorScheme.primary,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Text(
+          pair.asLowerCase, 
+          style: style,
+          semanticsLabel: "${pair.first} ${pair.second}" // for screen readers to read the words separately
+          ,),
+      ),
+    );
+  }
+}
+
+// flutter uses composition ver inheritance where it can
+// hence, Padding is a widget instead of an attribute of Text
+// Now, I can use padding to wrap any kind of widget
