@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         title: "Namer App",
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.tealAccent),
         ),
         home: MyHomePage(),
       ),
@@ -31,6 +31,17 @@ class MyAppState extends ChangeNotifier {
   void getNext() {
     current = WordPair.random();
     notifyListeners(); // ensures that anyone watching MyAppState is notified
+  }
+
+  var favorites = <WordPair>{};
+
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    notifyListeners();
   }
 }
 // MyAppState defines the data the app needs to function.
@@ -49,22 +60,46 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+
+    IconData icon;
+    if (appState.favorites.contains(pair)){
+      icon = Icons.favorite;
+    }
+    else{
+      icon = Icons.favorite_border_outlined;
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.center, 
+          // crossAxisAlignment: CrossAxisAlignment.center,
           // already centered horizontally, use widget inspector to see how
           // we need to wrap it with Center widget to actually center it on the page
           children: [
             // Text('A random AWESOME idea: '),
             BigCard(pair: pair),
-            SizedBox(height: 20,),
-            ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'))
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton.icon(
+                    onPressed: () {
+                      appState.toggleFavorite();
+                    },
+                    label: Text('Like'),
+                    icon: Icon(icon),
+                  ),
+                SizedBox(width: 20,),
+                ElevatedButton(
+                    onPressed: () {
+                      appState.getNext();
+                    },
+                    child: Text('Next')),
+              ],
+            )
           ],
         ),
       ),
@@ -82,10 +117,10 @@ class BigCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context); //  requests the app's current theme
     final style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary, // onPrimary means on top of the primary shade
+      color: theme
+          .colorScheme.onPrimary, // onPrimary means on top of the primary shade
     );
 
     return Card(
@@ -93,10 +128,12 @@ class BigCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Text(
-          pair.asLowerCase, 
+          pair.asLowerCase,
           style: style,
-          semanticsLabel: "${pair.first} ${pair.second}" // for screen readers to read the words separately
-          ,),
+          semanticsLabel:
+              "${pair.first} ${pair.second}" // for screen readers to read the words separately
+          ,
+        ),
       ),
     );
   }
