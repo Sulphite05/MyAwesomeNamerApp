@@ -70,7 +70,46 @@ class MyHomePage extends StatelessWidget {
     }
 
     return Scaffold(
-      body: Center(
+      body: Row(
+        children: [
+          SafeArea(child: NavigationRail(
+            extended: false,
+            destinations: [
+              NavigationRailDestination(icon: Icon(Icons.home), label: Text('Home')),
+              NavigationRailDestination(icon: Icon(Icons.favorite), label: Text('Favorites')),
+            ],
+            selectedIndex: 0,
+            onDestinationSelected: (value){
+              print('selectes: $value');
+            },
+            ),
+            ),
+            Expanded(
+              child: Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: GeneratorPage(),
+              ),
+            )
+      ],)
+    );
+  }
+}
+
+class GeneratorPage extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var pair = appState.current;
+
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border_outlined;
+    }
+
+    return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.center,
@@ -101,9 +140,7 @@ class MyHomePage extends StatelessWidget {
               ],
             )
           ],
-        ),
-      ),
-    );
+        ));
   }
 }
 
